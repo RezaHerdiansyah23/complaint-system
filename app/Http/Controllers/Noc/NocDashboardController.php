@@ -11,25 +11,41 @@ use App\Models\Response;
 
 class NocDashboardController extends Controller
 {
-   public function index()
+   public function index(Request $request)
     {
-        // Ambil semua complaint yang ditugaskan ke NOC login
-        $responses = Response::with('complaint.user')
-            ->where('noc_id', Auth::id())
-            ->latest()
-            ->get();
+        // 1. Ambil input untuk filter dan sortir
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortDir = $request->input('sort_dir', 'desc');
+        $search = $request->input('search', '');
+        $statusFilter = $request->input('status', '');
 
-        return view('noc.dashboard', compact('responses'));
+        // 2. Ambil ID keluhan yang ditugaskan ke NOC yang sedang login
+        $assignedComplaintIds = Response::where('noc_id', Auth::id())->pluck('complaint_id');
+
+        // 3. Buat query untuk mengambil data keluhan
+        $complaints = Complaint::whereIn('id', $assignedComplaintIds)
+            ->with('user') // Eager load relasi user
+            ->filter($request->only(['search', 'status'])) // Gunakan scope filter yang sudah ada
+            ->orderBy($sortBy, $sortDir)
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('noc.dashboard', compact('complaints'));
     }
 
     public function show($id)
-    {
-        $response = Response::with('complaint.user')->where('noc_id', Auth::id())
-                    ->where('complaint_id', $id)
-                    ->firstOrFail();
+{
+    // 1. Cari keluhan berdasarkan ID, langsung ambil semua relasi yang dibutuhkan
+    $complaint = Complaint::with(['user', 'response.noc'])->findOrFail($id);
 
-        return view('noc.complaints.show', compact('response'));
+    // 2. Security Check: Pastikan keluhan ini benar-benar ditugaskan ke NOC yang sedang login
+    if (!$complaint->response || $complaint->response->noc_id !== Auth::id()) {
+        abort(403, 'Anda tidak memiliki akses ke keluhan ini.');
     }
+
+    // 3. Kirim variabel $complaint yang sudah lengkap ke view
+    return view('noc.complaints.show', compact('complaint'));
+}
 
     public function updateStatus(Request $request, $id)
     {

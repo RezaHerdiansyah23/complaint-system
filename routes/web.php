@@ -9,6 +9,10 @@ use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsNoc;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Noc\NocDashboardController;
+use Illuminate\Http\Request;
+use App\Http\Controllers\DashboardController;
+use App\Http\Middleware\RoleRedirectMiddleware;
+
 
 // root
 Route::get('/', function () {
@@ -16,13 +20,10 @@ Route::get('/', function () {
 });
 
 //user(pengguna)
-Route::get('/dashboard', function () {
-    $complaints = Complaint::where('user_id', auth()->id())
-                           ->latest()
-                           ->get();
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified', 'role.redirect'])
+    ->name('dashboard');
 
-    return view('dashboard', compact('complaints'));
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

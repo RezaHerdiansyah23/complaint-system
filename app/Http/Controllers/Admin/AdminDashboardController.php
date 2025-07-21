@@ -13,9 +13,17 @@ use App\Models\Response;
 class AdminDashboardController extends Controller
 {
     //this function will be used to display the admin dashboard
-    public function index()
+     public function index(Request $request)
     {
-        $complaints = Complaint::with('user')->latest()->get();
+         $sortBy = $request->input('sort_by', 'created_at');
+        $sortDir = $request->input('sort_dir', 'desc');
+
+        // GABUNGKAN SEMUA QUERY MENJADI SATU
+        $complaints = Complaint::with('user')
+            ->filter($request->only(['search', 'status'])) // Memanggil scope filter dari Model
+            ->orderBy($sortBy, $sortDir)
+            ->paginate(10)
+            ->withQueryString();
 
         return view('admin.dashboard', compact('complaints'));
     }

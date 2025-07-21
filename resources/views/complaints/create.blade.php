@@ -1,47 +1,51 @@
-<x-app-layout>
-    <x-slot name="header">
-          <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Submit Complaint') }}
-        </h2>
-    </x-slot>
+<x-templates.navigation-template 
+    title="Buat Keluhan Baru" 
+    :menu-items="[
+        ['href' => route('complaints.create'), 'label' => 'Buat Keluhan', 'active' => true],
+        ['href' => route('dashboard'), 'label' => 'Riwayat Keluhan', 'active' => false],
+        ['href' => '#', 'label' => 'Feedback', 'active' => false],
+    ]">
 
+    <x-atoms.card>
+        <form method="POST" action="{{ route('complaints.store') }}" enctype="multipart/form-data" class="space-y-6">
+            @csrf
 
-
-      <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <form method="POST" action="{{ route('complaints.store') }}" enctype="multipart/form-data">
-                    @csrf
-
-                    <!-- Title -->
-                    <div class="mb-4">
-                        <x-input-label for="title" :value="__('Title')" />
-                        <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" required />
-                        <x-input-error :messages="$errors->get('title')" class="mt-2" />
-                    </div>
-
-                    <!-- Description -->
-                    <div class="mb-4">
-                        <x-input-label for="description" :value="__('Description')" />
-                        <textarea id="description" name="description" rows="4" class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring focus:ring-indigo-200"></textarea>
-                        <x-input-error :messages="$errors->get('description')" class="mt-2" />
-                    </div>
-
-                    <!-- Attachment -->
-                    <div class="mb-4">
-                        <x-input-label for="attachment" :value="__('Attachment (optional)')" />
-                        <input id="attachment" name="attachment" type="file" class="mt-1 block w-full" />
-                        <x-input-error :messages="$errors->get('attachment')" class="mt-2" />
-                    </div>
-
-                    <x-primary-button class="mt-4">
-                        {{ __('Submit') }}
-                    </x-primary-button>
-                </form>
+            <div>
+                <x-atoms.input
+                    name="title"
+                    label="Judul Keluhan"
+                    type="text"
+                    :required="true"
+                    autofocus
+                />
+                {{-- Komponen error tetap dipertahankan karena atom input tidak menanganinya --}}
+                <x-input-error :messages="$errors->get('title')" class="mt-2" />
             </div>
-        </div>
-    </div>
 
+            {{-- Description --}}
+            <div>
+                <x-atoms.textarea
+                    name="description"
+                    label="Deskripsi Lengkap"
+                    rows="5"
+                    :required="true"
+                    :variant="$errors->has('description') ? 'error' : 'default'"
+                />
+                <x-input-error :messages="$errors->get('description')" class="mt-2" />
+            </div>
+            {{-- Attachment --}}
+            <div>
+                <x-input-label for="attachment" :value="__('Lampiran (Opsional)')" />
+                <input id="attachment" name="attachment" type="file" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200"/>
+                <x-input-error :messages="$errors->get('attachment')" class="mt-2" />
+            </div>
 
+            <div class="flex items-center gap-4">
+                <x-atoms.button variant="success" type="submit">
+                    {{ __('Kirim Keluhan') }}
+                </x-atoms.button>
+            </div>
+        </form>
+    </x-atoms.card>
 
-</x-app-layout>
+</x-templates.navigation-template>s

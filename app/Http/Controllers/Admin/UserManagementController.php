@@ -9,12 +9,28 @@ use App\Models\User;
 
 class UserManagementController extends Controller
 {
-    public function index()
-    {
-        $users = User::latest()->get();
+    public function index(Request $request)
+{
+    // Ambil input untuk sortir, defaultnya urutkan berdasarkan nama
+    $sortBy = $request->input('sort_by', 'full_name');
+    $sortDir = $request->input('sort_dir', 'asc');
 
-        return view('admin.users.index', compact('users'));
-    }
+    // Ambil input untuk pencarian
+    $search = $request->input('search', '');
+
+    // Buat query untuk mengambil data pengguna
+    $usersQuery = User::query()
+        ->when($search, function($query, $search) {
+            // Cari berdasarkan nama atau email
+            $query->where('full_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+        });
+
+    // Terapkan sortir dan pagination
+    $users = $usersQuery->orderBy($sortBy, $sortDir)->paginate(10)->withQueryString();
+
+    return view('admin.users.index', compact('users'));
+}
 
     public function show($id)
 {
