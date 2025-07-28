@@ -17,15 +17,19 @@ class AdminDashboardController extends Controller
     {
          $sortBy = $request->input('sort_by', 'created_at');
         $sortDir = $request->input('sort_dir', 'desc');
-
+         $stats = [
+        'verified' => Complaint::where('verification_status', 'accepted')->count(),
+        'distributed' => Complaint::whereHas('response')->count(),
+        'completed' => Complaint::where('status', 'resolved')->count(),
+    ];
         // GABUNGKAN SEMUA QUERY MENJADI SATU
         $complaints = Complaint::with('user')
-            ->filter($request->only(['search', 'status'])) // Memanggil scope filter dari Model
+    ->filter($request->only(['search', 'status', 'verification_status'])) // <-- filtering
             ->orderBy($sortBy, $sortDir)
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.dashboard', compact('complaints'));
+         return view('admin.dashboard', compact('complaints', 'stats'));
     }
 
     public function show($id)
@@ -61,5 +65,40 @@ public function assign(Request $request, $id)
     return back()->with('success', 'Complaint has been assigned to technician.');
 }
 
+public function verify(Complaint $complaint)
+    {
+        // Cek apakah sudah pernah diverifikasi
+        if ($complaint->verified_at) {
+            return back()->with('error', 'Complaint has already been verified.');
+        }
+
+        // Lakukan verifikasi
+        $complaint->verified_at = now();
+        $complaint->verified_by = auth()->id();
+        $complaint->save();
+
+        return back()->with('success', 'Complaint has been successfully verified.');
+    }
+
+
+    public function accept(Complaint $complaint)
+    {
+        if ($complaint->verification_status !== 'pending') {
+            return back()->with('error', 'This complaint has already been reviewed.');
+        }
+        $complaint->verification_status = 'accepted';
+        $complaint->save();
+        return back()->with('success', 'Complaint has been accepted and is ready to be assigned.');
+    }
+
+    public function reject(Complaint $complaint)
+    {
+        if ($complaint->verification_status !== 'pending') {
+            return back()->with('error', 'This complaint has already been reviewed.');
+        }
+        $complaint->verification_status = 'rejected';
+        $complaint->save();
+        return back()->with('success', 'Complaint has been rejected.');
+    }
 
 }

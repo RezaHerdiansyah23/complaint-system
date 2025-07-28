@@ -1,5 +1,14 @@
-<x-app-layout>
-    <x-slot name="header">
+
+<x-templates.navigation-template 
+    title="Detail Keluhan" 
+    :menu-items="[
+        ['href' => route('complaints.create'), 'label' => 'Buat Keluhan', 'active' => true],
+        ['href' => route('dashboard'), 'label' => 'Riwayat Keluhan', 'active' => false],
+        ['href' => route('feedback.index'), 'label' => 'Feedback', 'active' => request()->routeIs('feedback.*')],
+    ]">
+
+
+<x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             Complaint Detail
         </h2>
@@ -48,4 +57,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-templates.navigation-template>

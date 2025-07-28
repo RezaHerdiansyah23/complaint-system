@@ -43,22 +43,38 @@ public function update(Request $request, $id)
 {
     $user = User::findOrFail($id);
 
-    $request->validate([
+     $request->validate([
         'full_name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email,' . $user->id,
-        'role' => 'required|in:admin,noc,customer'
+        'role' => 'required|in:admin,noc,customer',
+        // Password sekarang opsional
+        'password' => 'nullable|min:6|confirmed',
     ]);
+
+    
+
+     // Siapkan data untuk diupdate
+    $data = $request->only('full_name', 'email', 'role');
+    
 
     // Kalau customer, role tidak boleh diubah
     if ($user->role === 'customer') {
         $request->merge(['role' => 'customer']);
     }
 
-    $user->update([
-        'full_name' => $request->full_name,
-        'email' => $request->email,
-        'role' => $request->role,
-    ]);
+
+    // Jika password diisi, hash dan tambahkan ke data update
+    if ($request->filled('password')) {
+        $data['password'] = bcrypt($request->password);
+    }
+    
+    // Kalau customer, role tidak boleh diubah
+    if ($user->role === 'customer') {
+        unset($data['role']);
+    }
+
+    $user->update($data);
+
 
     return back()->with('success', 'User updated successfully.');
 }

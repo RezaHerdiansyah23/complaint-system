@@ -1,6 +1,7 @@
 @props([
     // Terima prop 'action', dengan nilai default ke route pelanggan
-    'action' => route('dashboard') 
+    'action' => route('dashboard'),
+    'showVerificationFilter' => false, 
 ])
 
 @php
@@ -8,6 +9,12 @@
         'Pending' => 'Pending',
         'In Progress' => 'In Progress',
         'Completed' => 'Completed',
+    ];
+
+     $verificationOptions = [
+        'pending' => 'Menunggu Verifikasi',
+        'accepted' => 'Diterima',
+        'rejected' => 'Ditolak',
     ];
 @endphp
 
@@ -35,6 +42,18 @@
             onchange="this.form.submit()"
         />
     </div>
+
+    @if($showVerificationFilter)
+    <div>
+        <x-atoms.select
+            name="verification_status"
+            :options="$verificationOptions"
+            :selectedValue="request('verification_status')"
+            placeholder="Semua Verifikasi"
+            onchange="this.form.submit()"
+        />
+    </div>
+    @endif
 
     {{-- Tombol Submit --}}
     <div>

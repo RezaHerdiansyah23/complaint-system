@@ -5,6 +5,7 @@
         <thead>
             <tr>
                 <x-atoms.sortable-heading sort_by="title">Title</x-atoms.sortable-heading>
+                <x-atoms.sortable-heading sort_by="company_name">Perusahaan</x-atoms.sortable-heading>
                 <x-atoms.sortable-heading sort_by="created_at">Date Assigned</x-atoms.sortable-heading>
                 <x-atoms.sortable-heading sort_by="status">Status</x-atoms.sortable-heading>
                 <x-atoms.table-heading>Action</x-atoms.table-heading>
@@ -14,6 +15,7 @@
             @forelse ($complaints as $complaint)
                 <tr>
                     <td class="px-4 py-2 whitespace-nowrap text-gray-800 dark:text-white">{{ $complaint->title }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-800 dark:text-white">{{ $complaint->company_name }}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-gray-800 dark:text-white">{{ $complaint->created_at->format('d M Y') }}</td>
                     <td class="px-4 py-2 whitespace-nowrap">
                         <x-atoms.status-label :status="$complaint->status" />

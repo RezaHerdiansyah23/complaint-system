@@ -1,7 +1,7 @@
 @php
     $menuItems = [
         ['href' => route('admin.dashboard'), 'label' => 'Verifikasi Keluhan', 'active' => false],
-        ['href' => '#', 'label' => 'Statistik Pengguna', 'active' => false],
+        ['href' => route('admin.statistics.index'), 'label' => 'Statistik', 'active' => false],
         ['href' => route('admin.users.index'), 'label' => 'Kelola Pengguna', 'active' => true],
     ];
 @endphp

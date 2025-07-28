@@ -3,7 +3,7 @@
     $menuItems = [
         ['href' => route('complaints.create'), 'label' => 'Buat Keluhan', 'active' => request()->routeIs('complaints.create')],
         ['href' => route('dashboard'), 'label' => 'Riwayat Keluhan', 'active' => request()->routeIs('dashboard')],
-        ['href' => '#', 'label' => 'Feedback', 'active' => false],
+        ['href' => route('feedback.index'), 'label' => 'Feedback', 'active' => request()->routeIs('feedback.*')],
     ];
 @endphp
 
@@ -19,7 +19,7 @@
     {{-- BAGIAN 1: STATISTIK --}}
     <div class="mb-8">
         <x-atoms.heading level="3" class="mb-4">Ringkasan Keluhan</x-atoms.heading>
-        <x-molecules.stats-overview :stats="$statusCounts" />
+        <x-molecules.stats-overview :stats="$stats" />
     </div>
 
     {{-- BAGIAN 2: RIWAYAT KELUHAN --}}
@@ -29,7 +29,11 @@
         <div class="flex justify-between items-center">
             <x-atoms.heading level="4" class="mb-0">Riwayat Keluhan Anda</x-atoms.heading>
             <div class="w-2/3">
-                <x-molecules.filter-bar />
+                <x-molecules.filter-bar
+                 :action="route('admin.dashboard')"
+                 :showVerificationFilter="true" 
+ 
+                 />
             </div>
         </div>
 

@@ -10,7 +10,8 @@
 <x-atoms.card>
     <x-atoms.heading level="4" class="mb-4">Distribusikan ke NOC</x-atoms.heading>
 
-    <form method="POST" action="{{ route('admin.complaints.assign', $complaint->id) }}" class="space-y-4">
+    {{-- 1. BERI ID PADA FORM --}}
+    <form method="POST" action="{{ route('admin.complaints.assign', $complaint->id) }}" class="space-y-4" id="assign-form">
         @csrf
 
         {{-- Dropdown NOC --}}
@@ -30,8 +31,28 @@
             rows="3"
         />
 
-        <x-atoms.button variant="primary" type="submit">
-            Assign Tugas
-        </x-atoms.button>
+        {{-- 2. GANTI TOMBOL BIASA DENGAN MODAL KONFIRMASI --}}
+        <x-molecules.confirmation-modal variant="primary" confirm-text="Ya, Assign">
+            {{-- Tombol Pemicu Modal --}}
+            <x-slot name="trigger">
+                <x-atoms.button variant="primary" type="button">
+                    Assign Tugas
+                </x-atoms.button>
+            </x-slot>
+
+            {{-- Judul Modal --}}
+            <x-slot name="title">Konfirmasi Penugasan</x-slot>
+
+            {{-- Pesan Konfirmasi (Default Slot) --}}
+            Anda yakin ingin menugaskan keluhan ini? Keluhan akan diteruskan ke teknisi yang dipilih.
+
+            {{-- Tombol Aksi di Dalam Modal --}}
+            <x-slot name="confirmAction">
+                <x-atoms.button variant="primary" type="button" onclick="document.getElementById('assign-form').submit();">
+                    Ya, Assign
+                </x-atoms.button>
+            </x-slot>
+        </x-molecules.confirmation-modal>
+
     </form>
 </x-atoms.card>

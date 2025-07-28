@@ -1,5 +1,5 @@
 @php
-    $level = $level ?? 1;
+    $level = (int) ($level ?? 1); 
     $tag = 'h' . $level;
 
     $baseClass = match($level) {

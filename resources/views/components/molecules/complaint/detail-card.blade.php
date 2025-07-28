@@ -11,7 +11,9 @@
         </p>
     </div>
 
+    {{-- Grid untuk detail --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        
         {{-- Detail Pelanggan --}}
         <div>
             <h4 class="font-semibold text-gray-700 dark:text-gray-300">Pelanggan:</h4>
@@ -21,20 +23,32 @@
             </p>
         </div>
 
-        {{-- Status dan Lampiran --}}
+        {{-- TAMBAHKAN NAMA PERUSAHAAN DI SINI --}}
+        <div>
+            <h4 class="font-semibold text-gray-700 dark:text-gray-300">Perusahaan:</h4>
+            <p class="mt-1 text-gray-800 dark:text-gray-100">
+                {{ $complaint->company_name }}
+            </p>
+        </div>
+
+        {{-- Status --}}
         <div>
             <h4 class="font-semibold text-gray-700 dark:text-gray-300">Status:</h4>
             <div class="mt-1">
                 <x-atoms.status-label :status="$complaint->status" />
             </div>
-
-            @if ($complaint->attachment)
-                <h4 class="font-semibold text-gray-700 dark:text-gray-300 mt-4">Lampiran:</h4>
-                <a href="{{ asset('storage/' . $complaint->attachment) }}" target="_blank" class="mt-1 text-indigo-500 hover:underline">
-                    Lihat Lampiran
-                </a>
-            @endif
         </div>
+        
+        {{-- Lampiran --}}
+        @if ($complaint->attachment)
+        <div>
+            <h4 class="font-semibold text-gray-700 dark:text-gray-300">Lampiran:</h4>
+            <a href="{{ asset('storage/' . $complaint->attachment) }}" target="_blank" class="mt-1 text-indigo-500 hover:underline">
+                Lihat Lampiran
+            </a>
+        </div>
+        @endif
+
     </div>
 
     {{-- Deskripsi --}}

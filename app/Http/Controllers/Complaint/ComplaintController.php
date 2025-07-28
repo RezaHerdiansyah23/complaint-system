@@ -19,6 +19,7 @@ class ComplaintController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
+            'company_name' => 'required|string|max:255',
             'description' => 'required|string',
             'attachment' => 'nullable|image|max:2048',
         ]);
@@ -31,6 +32,7 @@ class ComplaintController extends Controller
         Complaint::create([
             'user_id' => Auth::id(),
             'title' => $request->title,
+            'company_name' => $request->company_name,
             'description' => $request->description,
             'attachment' => $path,
             'status' => 'pending',

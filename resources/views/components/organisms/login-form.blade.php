@@ -1,6 +1,10 @@
 <form method="POST" action="{{ route('login') }}">
     @csrf
 
+    <x-atoms.heading level="2" class="text-center mb-6">
+        SISTEM KELUHAN PELANGGAN
+    </x-atoms.heading>
+
     <x-molecules.form-input-group 
         label="Email" 
         name="email" 
@@ -40,6 +44,5 @@
                 {{ __('Forgot your password?') }}
             </a>
         @endif
-
     </div>
 </form>

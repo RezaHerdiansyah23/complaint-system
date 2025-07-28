@@ -24,22 +24,21 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
             
-        $statusCounts = $rawStatusCounts->mapWithKeys(function ($total, $status) {
-            $displayStatus = match (strtolower($status)) {
-                'in_progress' => 'In Progress',
-                'resolved' => 'Completed',
-                default => Str::title($status),
-            };
-            return [$displayStatus => $total];
-        });
+         $stats = [
+        'aktif' => Complaint::where('user_id', Auth::id())->where('verification_status', 'accepted')->count(),
+        'selesai' => Complaint::where('user_id', Auth::id())->where('status', 'resolved')->count(),
+        'ditolak' => Complaint::where('user_id', Auth::id())->where('verification_status', 'rejected')->count(),
+    ];
 
         // 3. Query utama untuk tabel dengan LOGIKA FILTER STATUS YANG DIPERBAIKI
                 $complaints = Complaint::where('user_id', Auth::id())
+                            ->with('feedback') // <-- TAMBAHKAN BARIS INI
+
             ->filter($request->only(['search', 'status'])) // PANGGIL SCOPE DI SINI
             ->orderBy($sortBy, $sortDir)
             ->paginate(5)
             ->withQueryString();
 
-        return view('dashboard', compact('complaints', 'search', 'statusCounts'));
+        return view('dashboard', compact('complaints', 'search', 'stats'));
     }
 }

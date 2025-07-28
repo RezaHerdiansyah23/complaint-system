@@ -22,6 +22,10 @@ class NocDashboardController extends Controller
         // 2. Ambil ID keluhan yang ditugaskan ke NOC yang sedang login
         $assignedComplaintIds = Response::where('noc_id', Auth::id())->pluck('complaint_id');
 
+         $stats = [
+            'aktif' => Complaint::whereIn('id', $assignedComplaintIds)->where('status', 'in_progress')->count(),
+            'selesai' => Complaint::whereIn('id', $assignedComplaintIds)->where('status', 'resolved')->count(),
+        ];
         // 3. Buat query untuk mengambil data keluhan
         $complaints = Complaint::whereIn('id', $assignedComplaintIds)
             ->with('user') // Eager load relasi user
@@ -30,7 +34,7 @@ class NocDashboardController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('noc.dashboard', compact('complaints'));
+        return view('noc.dashboard', compact('complaints', 'stats'));
     }
 
     public function show($id)

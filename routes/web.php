@@ -12,7 +12,7 @@ use App\Http\Controllers\Noc\NocDashboardController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\RoleRedirectMiddleware;
-
+use App\Http\Controllers\FeedbackController;
 
 // root
 Route::get('/', function () {
@@ -37,6 +37,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/complaints', [ComplaintController::class, 'store'])->name('complaints.store');
     Route::get('/complaints/{id}', [ComplaintController::class, 'show'])->name('complaints.show');
 
+
+    Route::get('/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
+    Route::get('/complaints/{complaint}/feedback/create', [FeedbackController::class, 'create'])->name('feedback.create');
+
+    Route::post('/complaints/{complaint}/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+    Route::get('/feedback/{feedback}', [FeedbackController::class, 'show'])->name('feedback.show');
+
 });
 
 //admin
@@ -44,14 +51,18 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
 
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/complaints/{id}', [AdminDashboardController::class, 'show'])->name('admin.complaints.show');
-    Route::post('/admin/complaints/{id}/assign', [AdminDashboardController::class, 'assign'])->name('admin.complaints.assign');
-     Route::get('/admin/users/create', [UserManagementController::class, 'create'])->name('admin.users.create');
+    Route::post('/admin/complaints/{complaint}/accept', [AdminDashboardController::class, 'accept'])->name('admin.complaints.accept');
+    Route::post('/admin/complaints/{complaint}/reject', [AdminDashboardController::class, 'reject'])->name('admin.complaints.reject');    Route::post('/admin/complaints/{id}/assign', [AdminDashboardController::class, 'assign'])->name('admin.complaints.assign');
+    Route::get('/admin/users/create', [UserManagementController::class, 'create'])->name('admin.users.create');
     Route::post('/admin/users', [UserManagementController::class, 'store'])->name('admin.users.store');
 
     Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users.index');
     Route::get('/admin/users/{id}', [UserManagementController::class, 'show'])->name('admin.users.show');
     Route::put('/admin/users/{id}', [UserManagementController::class, 'update'])->name('admin.users.update');
-    Route::delete('/admin/users/{id}', [UserManagementController::class, 'destroy'])->name('admin.users.destroy');   
+    Route::delete('/admin/users/{id}', [UserManagementController::class, 'destroy'])->name('admin.users.destroy'); 
+    
+    Route::get('/admin/statistics', [\App\Http\Controllers\Admin\StatisticController::class, 'index'])->name('admin.statistics.index');
+
 });
 
 
