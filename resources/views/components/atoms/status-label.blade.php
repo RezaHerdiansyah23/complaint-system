@@ -1,14 +1,15 @@
 @props(['status'])
 
 @php
-    $color = match($status) {
-        'pending' => 'text-yellow-500',
-        'in_progress' => 'text-blue-500',
-        'resolved' => 'text-green-500',
-        default => 'text-gray-500'
-    };
+$config = match($status) {
+    'pending'     => ['class' => 'badge-warning', 'label' => 'Pending',      'dot' => 'bg-amber-400'],
+    'in_progress' => ['class' => 'badge-info',    'label' => 'In Progress',  'dot' => 'bg-blue-400'],
+    'resolved'    => ['class' => 'badge-success', 'label' => 'Resolved',     'dot' => 'bg-emerald-400'],
+    default       => ['class' => 'badge-neutral', 'label' => ucfirst($status), 'dot' => 'bg-zinc-400'],
+};
 @endphp
 
-<span class="font-semibold {{ $color }}">
-    {{ ucfirst(str_replace('_', ' ', $status)) }}
+<span class="{{ $config['class'] }} inline-flex items-center gap-1.5">
+    <span class="w-1.5 h-1.5 rounded-full {{ $config['dot'] }} {{ $status === 'in_progress' ? 'animate-pulse' : '' }}"></span>
+    {{ $config['label'] }}
 </span>

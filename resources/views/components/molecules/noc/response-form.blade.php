@@ -23,7 +23,7 @@
         <div class="mb-4 text-sm text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 pb-4 space-y-1">
             <p><strong>Perusahaan:</strong> {{ $complaint->company_name }}</p>
             @if($complaint->response && $complaint->response->notes)
-                <p><strong>Catatan dari Admin:</strong> {{ $complaint->response->notes }}</p>
+                <p><strong>Catatan:</strong> {{ $complaint->response->notes }}</p>
             @endif
         </div>
 
@@ -42,14 +42,14 @@
                     :required="true"
                 />
 
-                {{-- Technical Notes --}}
+                {{-- Catatan Teknis --}}
                 <x-atoms.textarea
                     name="notes"
                     id="notes-textarea"
-                    label="Catatan Teknis (diisi oleh Anda)"
+                    label="Catatan"
                     rows="4"
                     :required="true"
-                >{{ old('notes', $complaint->response->technical_notes ?? '') }}</x-atoms.textarea>
+                >{{ old('notes', $complaint->response?->notes ?? '') }}</x-atoms.textarea>
 
                 <div class="flex items-center gap-4">
                     {{-- Tombol utama "Update Keluhan" --}}

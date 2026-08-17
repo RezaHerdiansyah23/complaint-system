@@ -1,8 +1,8 @@
 @php
     $menuItems = [
         ['href' => route('complaints.create'), 'label' => 'Buat Keluhan', 'active' => false],
-        ['href' => route('dashboard'), 'label' => 'Riwayat Keluhan', 'active' => true],
-        ['href' => route('feedback.index'), 'label' => 'Feedback', 'active' => false],
+        ['href' => route('dashboard'), 'label' => 'Riwayat Keluhan', 'active' => false],
+        ['href' => route('feedback.index'), 'label' => 'Feedback', 'active' => true],
     ];
 @endphp
 

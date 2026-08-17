@@ -1,61 +1,205 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Informasi Keluhan Pelanggan
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Platform manajemen keluhan pelanggan berbasis web yang dibangun dengan Laravel. Memungkinkan pelanggan menyampaikan keluhan, admin memverifikasi dan mendistribusikan, serta tim NOC menangani setiap tiket hingga selesai.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **3 Role Pengguna** — Customer, Admin, dan NOC dengan dashboard masing-masing
+- **Alur Keluhan** — Customer buat keluhan → Admin verifikasi & assign → NOC tangani → Customer beri feedback
+- **Manajemen Pengguna** — Admin dapat membuat, mengedit, dan menghapus akun
+- **Statistik** — Grafik keluhan per bulan/tahun untuk Admin
+- **Dark / Light Mode** — Toggle tema tersimpan di browser
+- **Sidebar Collapsible** — Sidebar bisa diperkecil untuk ruang kerja yang lebih luas
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Kebutuhan Sistem
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Pastikan perangkat Anda sudah terinstall:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Kebutuhan | Versi Minimum |
+|-----------|---------------|
+| PHP | 8.2 |
+| Composer | 2.x |
+| Node.js | 18.x |
+| NPM | 9.x |
+| Database | SQLite (default) atau MySQL 8.x |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Langkah Instalasi
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 1. Clone atau Ekstrak Project
 
-### Premium Partners
+Jika menggunakan Git:
+```bash
+git clone <url-repository> complaint-system
+cd complaint-system
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Jika menerima file ZIP, ekstrak lalu masuk ke folder project.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 2. Install Dependency PHP
 
-## Code of Conduct
+```bash
+composer install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+### 3. Salin File Konfigurasi
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+cp .env.example .env
+```
 
-## License
+Kemudian buka file `.env` dan sesuaikan konfigurasi berikut:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```env
+APP_NAME="Sistem Keluhan Pelanggan"
+APP_URL=http://localhost:8000
+```
+
+**Jika menggunakan MySQL** (opsional, default sudah SQLite):
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database
+DB_USERNAME=root
+DB_PASSWORD=password_anda
+```
+
+---
+
+### 4. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+---
+
+### 5. Jalankan Migrasi Database
+
+```bash
+php artisan migrate
+```
+
+---
+
+### 6. Isi Data Awal (Akun Admin & NOC)
+
+```bash
+php artisan db:seed
+```
+
+Perintah ini akan membuat dua akun default:
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@mail.com | password |
+| NOC | noc@mail.com | password |
+
+> **Penting:** Ganti password akun-akun ini setelah pertama kali login melalui menu **Profil Akun**.
+
+---
+
+### 7. Buat Link Storage (untuk Upload Lampiran)
+
+```bash
+php artisan storage:link
+```
+
+---
+
+### 8. Install Dependency Frontend
+
+```bash
+npm install
+```
+
+---
+
+### 9. Build Asset Frontend
+
+Untuk **production**:
+```bash
+npm run build
+```
+
+Untuk **development** (dengan hot reload):
+```bash
+npm run dev
+```
+
+---
+
+### 10. Jalankan Server
+
+```bash
+php artisan serve
+```
+
+Aplikasi dapat diakses di: **http://localhost:8000**
+
+---
+
+## Cara Login
+
+1. Buka **http://localhost:8000**
+2. Klik **Masuk Ke Aplikasi**
+3. Gunakan akun sesuai role yang diinginkan (lihat tabel di langkah 6)
+4. Untuk mendaftar sebagai **Customer**, klik **Daftar Akun Baru** di halaman login
+
+---
+
+## Struktur Role & Akses
+
+```
+Customer  →  /dashboard         (buat keluhan, lihat riwayat, beri feedback)
+Admin     →  /admin             (verifikasi keluhan, assign ke NOC, kelola user, statistik)
+NOC       →  /noc               (lihat & tangani keluhan yang ditugaskan)
+```
+
+---
+
+## Perintah Berguna
+
+| Perintah | Fungsi |
+|----------|--------|
+| `php artisan migrate:fresh --seed` | Reset database dan isi ulang data awal |
+| `php artisan view:clear` | Hapus cache view Blade |
+| `php artisan optimize:clear` | Hapus semua cache aplikasi |
+| `php artisan storage:link` | Buat symlink untuk file upload |
+
+---
+
+## Troubleshooting
+
+**Halaman error 500 setelah install**
+- Pastikan file `.env` sudah ada dan `APP_KEY` sudah terisi
+- Jalankan `php artisan optimize:clear`
+
+**Upload lampiran tidak muncul**
+- Jalankan `php artisan storage:link`
+
+**CSS/tampilan tidak muncul atau berantakan**
+- Jalankan `npm run build` ulang
+
+**Tidak bisa login padahal password benar**
+- Pastikan migrasi dan seeder sudah dijalankan
+- Coba `php artisan migrate:fresh --seed`
+
+---
+
+## Tech Stack
+
+- **Backend** — Laravel 12, PHP 8.2
+- **Frontend** — Blade, Tailwind CSS, Alpine.js
+- **Build Tool** — Vite
+- **Database** — SQLite (default) / MySQL

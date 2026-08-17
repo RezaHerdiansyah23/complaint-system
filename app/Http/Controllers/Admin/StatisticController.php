@@ -30,13 +30,24 @@ class StatisticController extends Controller
             'ditolak' => (clone $baseQuery)->where('verification_status', 'rejected')->count(),
         ];
 
-        // 4. Siapkan data untuk Chart.js (Jumlah keluhan per status)
+        // 4. Siapkan data untuk Chart.js (Jumlah keluhan per status + verifikasi rejected)
         $chartDataQuery = (clone $baseQuery)
-            ->select('status', DB::raw('count(*) as total'))
-            ->groupBy('status')
-            ->pluck('total', 'status');
+            ->select(DB::raw('
+                CASE 
+                    WHEN verification_status = "rejected" THEN "rejected"
+                    ELSE status
+                END as final_status
+            '), DB::raw('count(*) as total'))
+            ->groupBy('final_status')
+            ->pluck('total', 'final_status');
         
-        $chartLabels = $chartDataQuery->keys()->map(fn ($status) => Str::title(str_replace('_', ' ', $status)))->all();
+        $chartLabels = $chartDataQuery->keys()->map(fn ($status) => match($status) {
+            'pending' => 'Pending',
+            'in_progress' => 'Aktif',
+            'resolved' => 'Selesai',
+            'rejected' => 'Ditolak',
+            default => Str::title(str_replace('_', ' ', $status))
+        })->all();
         $chartValues = $chartDataQuery->values()->all();
 
         // 5. Siapkan data untuk filter dropdown di view

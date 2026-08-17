@@ -22,3 +22,10 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# AI tooling artifacts
+SKILL.md
+.playwright-mcp/
+screenshot-*.png
+screenshot-*.jpg
+*.screenshot.png

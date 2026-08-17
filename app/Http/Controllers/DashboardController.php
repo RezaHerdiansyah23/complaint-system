@@ -12,9 +12,8 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Mengambil input untuk filter dan sortir
         $sortBy = $request->input('sort_by', 'created_at');
-        $sortDir = $request->input('sort_dir', 'desc');
+        $sortDir = $request->input('sort_dir', 'asc');
         $search = $request->input('search', '');
         $statusFilter = $request->input('status', '');
 

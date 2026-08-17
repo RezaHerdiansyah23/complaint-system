@@ -1,19 +1,18 @@
 @props([
     'menuItems' => [],
-    'title' => 'Dashboard',
+    'title'     => 'Dashboard',
 ])
 
-<div class="flex min-h-screen">
+<div class="flex min-h-screen bg-gray-50 dark:bg-zinc-950 transition-colors duration-200" x-data>
+
     {{-- Sidebar --}}
     <x-molecules.sidebar :items="$menuItems" />
 
-    {{-- Main Content --}}
-    <div class="flex-1 flex flex-col">
-        {{-- Topbar --}}
+    {{-- Main --}}
+    <div class="flex-1 flex flex-col min-w-0 transition-all duration-300">
         <x-molecules.topbar :title="$title" />
 
-        {{-- Page Content --}}
-        <main class="p-6 bg-gray-100 dark:bg-gray-900 flex-1">
+        <main class="flex-1 p-6 overflow-y-auto bg-gray-50 dark:bg-zinc-950 transition-colors duration-200">
             {{ $slot }}
         </main>
     </div>

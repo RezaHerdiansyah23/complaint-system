@@ -8,6 +8,18 @@
 
 <x-templates.navigation-template :menu-items="$menuItems" title="Detail Keluhan">
 
+    {{-- Notifikasi Sukses/Error --}}
+    @if (session('success'))
+        <div class="mb-4 rounded-lg bg-green-50 dark:bg-green-900/30 p-4 text-sm font-semibold text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="mb-4 rounded-lg bg-red-50 dark:bg-red-900/30 p-4 text-sm font-semibold text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800">
+            {{ session('error') }}
+        </div>
+    @endif
+
     {{-- Tampilkan Detail Keluhan --}}
     <x-molecules.complaint.detail-card :complaint="$complaint" />
 

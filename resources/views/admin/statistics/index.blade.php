@@ -79,6 +79,20 @@
         const chartLabels = @json($chartLabels);
         const chartValues = @json($chartValues);
 
+        const backgroundColors = chartLabels.map((label) => {
+            if (label === 'Ditolak') return 'rgba(255, 99, 132, 0.2)';
+            if (label === 'Selesai') return 'rgba(75, 192, 192, 0.2)';
+            if (label === 'Aktif') return 'rgba(54, 162, 235, 0.2)';
+            return 'rgba(255, 205, 86, 0.2)';
+        });
+
+        const borderColors = chartLabels.map((label) => {
+            if (label === 'Ditolak') return 'rgb(255, 99, 132)';
+            if (label === 'Selesai') return 'rgb(75, 192, 192)';
+            if (label === 'Aktif') return 'rgb(54, 162, 235)';
+            return 'rgb(255, 205, 86)';
+        });
+
         new Chart(ctx, {
             type: 'bar',
             data: {
@@ -86,8 +100,8 @@
                 datasets: [{
                     label: 'Jumlah Keluhan',
                     data: chartValues,
-                    backgroundColor: ['rgba(255, 205, 86, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-                    borderColor: ['rgb(255, 205, 86)', 'rgb(54, 162, 235)', 'rgb(75, 192, 192)'],
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
                     borderWidth: 1
                 }]
             },

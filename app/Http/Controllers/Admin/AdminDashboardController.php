@@ -16,7 +16,7 @@ class AdminDashboardController extends Controller
      public function index(Request $request)
     {
          $sortBy = $request->input('sort_by', 'created_at');
-        $sortDir = $request->input('sort_dir', 'desc');
+         $sortDir = $request->input('sort_dir', 'asc');
          $stats = [
         'verified' => Complaint::where('verification_status', 'accepted')->count(),
         'distributed' => Complaint::whereHas('response')->count(),

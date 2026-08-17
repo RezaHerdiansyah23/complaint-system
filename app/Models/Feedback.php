@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Feedback extends Model
 {
@@ -18,13 +19,12 @@ class Feedback extends Model
         'comment',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-    public function feedback()
-{
-    return $this->hasOne(Feedback::class);
-}
-
- public function complaint()
+    public function complaint()
     {
         return $this->belongsTo(Complaint::class);
     }

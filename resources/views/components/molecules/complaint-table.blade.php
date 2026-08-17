@@ -1,71 +1,82 @@
 @props(['complaints'])
 
-<div class="overflow-x-auto">
+<div class="space-y-4">
     @if(request('search'))
-        <div class="text-sm text-gray-400 dark:text-gray-300 mb-2">
-            Hasil pencarian: "<strong>{{ request('search') }}</strong>" | Total Hasil: {{ $complaints->total() }}
+        <div class="card-flat p-4 text-sm text-gray-600 dark:text-gray-300">
+            Hasil pencarian: "<strong>{{ request('search') }}</strong>" | Total hasil: {{ $complaints->total() }}
         </div>
     @endif
 
     @if($complaints->isEmpty())
-        <div class="text-sm text-gray-500 mt-4 p-4 text-center bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <div class="card-flat p-8 text-sm text-gray-500 dark:text-gray-400 text-center">
             Tidak ditemukan keluhan dengan kriteria yang dicari.
         </div>
     @else
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600 text-sm">
-            <thead>
-                <tr>
-                    <x-atoms.sortable-heading sort_by="title">Title</x-atoms.sortable-heading>
-                    <x-atoms.sortable-heading sort_by="created_at">Date</x-atoms.sortable-heading>
-                    <x-atoms.sortable-heading sort_by="status">Status</x-atoms.sortable-heading>
-                    <x-atoms.sortable-heading sort_by="verified_at">Verifikasi</x-atoms.sortable-heading>
-                    <x-atoms.table-heading>Action</x-atoms.table-heading>
-                </tr>
-            </thead>
-            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
-                @foreach ($complaints as $complaint)
+        <div class="table-container">
+            <table class="table">
+                <thead class="table-header">
                     <tr>
-                        <td class="px-4 py-2 whitespace-nowrap text-gray-800 dark:text-white">{{ $complaint->title }}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-gray-800 dark:text-white">{{ $complaint->created_at->format('d M Y') }}</td>
-                        <td class="px-4 py-2 whitespace-nowrap">
-                        <x-atoms.status-label :status="$complaint->status" />
-                    </td>
-                        <td class="px-4 py-2 whitespace-nowrap">
-                        @php
-                            $verificationBadge = match($complaint->verification_status) {
-                                'accepted' => 'bg-green-100 text-green-800',
-                                'rejected' => 'bg-red-100 text-red-800',
-                                default => 'bg-yellow-100 text-yellow-800',
-                            };
-                        @endphp
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $verificationBadge }}">
-                            {{ Str::title($complaint->verification_status) }}
-                        </span>
-                    </td>
-                        <td class="px-4 py-2 whitespace-nowrap text-indigo-500 hover:underline">
-                            {{-- LOGIKA BARU UNTUK TOMBOL AKSI --}}
-                            @if ($complaint->status === 'resolved')
-                                @if ($complaint->feedback)
-                                    {{-- Jika solved & ada feedback, tampilkan link Lihat Feedback --}}
-                                    <a href="{{ route('feedback.show', $complaint->feedback->id) }}">
-                                        Lihat Feedback
-                                    </a>
-                                @else
-                                    {{-- Jika solved tapi BELUM ada feedback, tampilkan link Beri Feedback --}}
-                                    <a href="{{ route('feedback.create', $complaint->id) }}">
-                                        Beri Feedback
-                                    </a>
-                                @endif
-                            @else
-                                {{-- Jika belum solved, tampilkan link View detail biasa --}}
-                                <a href="{{ route('complaints.show', $complaint->id) }}">
-                                    View Detail
-                                </a>
-                            @endif
-                        </td>
+                        <x-atoms.table-heading>No. Tiket</x-atoms.table-heading>
+                        <x-atoms.sortable-heading sort_by="title">Title</x-atoms.sortable-heading>
+                        <x-atoms.sortable-heading sort_by="created_at">Date</x-atoms.sortable-heading>
+                        <x-atoms.sortable-heading sort_by="status">Status</x-atoms.sortable-heading>
+                        <x-atoms.sortable-heading sort_by="verified_at">Verifikasi</x-atoms.sortable-heading>
+                        <x-atoms.table-heading>Action</x-atoms.table-heading>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    @foreach ($complaints as $complaint)
+                        <tr class="table-row">
+                            <td class="px-6 py-3.5 whitespace-nowrap text-gray-800 dark:text-white font-semibold">
+                                @if ($complaint->verification_status === 'accepted')
+                                    <span class="badge badge-info">TKT-{{ str_pad($complaint->id, 5, '0', STR_PAD_LEFT) }}</span>
+                                @else
+                                    <span class="text-xs text-gray-400 dark:text-gray-500">—</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-3.5 whitespace-nowrap text-gray-800 dark:text-white">
+                                {{ $complaint->title }}
+                            </td>
+                            <td class="px-6 py-3.5 whitespace-nowrap text-gray-600 dark:text-gray-400 text-sm">
+                                {{ $complaint->created_at->format('d M Y H:i') }}
+                            </td>
+                            <td class="px-6 py-3.5 whitespace-nowrap">
+                                @if ($complaint->verification_status === 'rejected')
+                                    <span class="badge badge-danger">Ditolak</span>
+                                @else
+                                    <x-atoms.status-label :status="$complaint->status" />
+                                @endif
+                            </td>
+                            <td class="px-6 py-3.5 whitespace-nowrap">
+                                @php
+                                    $verificationBadge = match($complaint->verification_status) {
+                                        'accepted' => 'badge-success',
+                                        'rejected' => 'badge-danger',
+                                        default => 'badge-warning',
+                                    };
+                                @endphp
+                                @if ($complaint->verification_status === 'rejected')
+                                    <span class="{{ $verificationBadge }}">Ditolak</span>
+                                @elseif($complaint->verification_status === 'pending')
+                                    <span class="{{ $verificationBadge }}">Pending</span>
+                                @else
+                                    <span class="{{ $verificationBadge }}">{{ Str::title($complaint->verification_status) }}</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-3.5 whitespace-nowrap">
+                                <a href="{{ $complaint->status === 'resolved'
+                                    ? ($complaint->feedback ? route('feedback.show', $complaint->feedback->id) : route('feedback.create', $complaint->id))
+                                    : route('complaints.show', $complaint->id) }}"
+                                   class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium text-sm transition-colors">
+                                    {{ $complaint->status === 'resolved'
+                                        ? ($complaint->feedback ? 'Lihat Feedback' : 'Beri Feedback')
+                                        : 'View Detail' }}
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     @endif
 </div>

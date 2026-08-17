@@ -1,9 +1,10 @@
 @props(['complaints'])
 
-<div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600 text-sm">
+<div class="table-container">
+    <table class="table">
         <thead>
             <tr>
+                <x-atoms.table-heading>No. Tiket</x-atoms.table-heading>
                 <x-atoms.sortable-heading sort_by="company_name">Perusahaan</x-atoms.sortable-heading>
                 <x-atoms.sortable-heading sort_by="created_at">Date</x-atoms.sortable-heading>
                 <x-atoms.sortable-heading sort_by="status">Status</x-atoms.sortable-heading>
@@ -14,8 +15,15 @@
         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
             @forelse ($complaints as $complaint)
                 <tr>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-800 dark:text-white font-semibold">
+                        @if ($complaint->verification_status === 'accepted')
+                            TKT-{{ str_pad($complaint->id, 5, '0', STR_PAD_LEFT) }}
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td class="px-4 py-2 whitespace-nowrap text-gray-800 dark:text-white">{{ $complaint->company_name }}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-gray-800 dark:text-white">{{ $complaint->created_at->format('d M Y') }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-800 dark:text-white">{{ $complaint->created_at->format('d M Y H:i') }}</td>
                     <td class="px-4 py-2 whitespace-nowrap">
                         <x-atoms.status-label :status="$complaint->status" />
                     </td>
@@ -37,7 +45,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="px-4 py-4 text-center text-gray-500">No complaints found.</td>
+                    <td colspan="6" class="px-4 py-4 text-center text-gray-500">No complaints found.</td>
                 </tr>
             @endforelse
         </tbody>
