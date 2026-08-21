@@ -5,10 +5,9 @@
         <div class="flex flex-col gap-4 pb-6 border-b border-gray-200 dark:border-gray-700 lg:flex-row lg:items-start lg:justify-between">
             <div class="space-y-3 flex-1">
                 <div class="flex items-center gap-2 flex-wrap">
-                    <span class="badge badge-neutral uppercase tracking-[0.1em] text-[10px] font-bold">Keluhan</span>
-                    @if ($complaint->verification_status === 'accepted')
-                        <span class="badge badge-info font-mono font-bold">TKT-{{ str_pad($complaint->id, 5, '0', STR_PAD_LEFT) }}</span>
-                    @endif
+            @if ($complaint->verification_status === 'accepted')
+            <span class="badge badge-info font-mono font-bold">TKT-{{ str_pad($complaint->id, 5, '0', STR_PAD_LEFT) }}</span>
+        @endif
                 </div>
                 <h3 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white max-w-4xl leading-tight">
                     {{ $complaint->title }}
@@ -25,7 +24,7 @@
                 <h4 class="text-xs uppercase tracking-wider font-bold text-gray-500 dark:text-gray-400">Pelanggan</h4>
                 <div class="text-gray-900 dark:text-gray-100">
                     <p class="font-semibold">{{ $complaint->user->full_name ?? '-' }}</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ $complaint->user->email }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ $complaint->user->email ?? '-' }}</p>
                 </div>
             </div>
 
@@ -64,19 +63,21 @@
         @if ($complaint->response)
             <div class="pt-6 border-t border-gray-200 dark:border-gray-700 space-y-2">
                 <h4 class="text-xs uppercase tracking-wider font-bold text-gray-500 dark:text-gray-400">
-                    Catatan NOC
+                    Catatan Teknis NOC
                     @if ($complaint->status === 'resolved')
                         <span class="badge badge-success ml-2">Resolved</span>
+                    @elseif ($complaint->status === 'in_progress')
+                        <span class="badge badge-warning ml-2">In Progress</span>
                     @endif
                 </h4>
                 <p class="text-gray-800 dark:text-gray-100 whitespace-pre-wrap leading-relaxed max-w-4xl font-medium">{{ $complaint->response->notes ?? '-' }}</p>
             </div>
         @endif
 
-        @if ($complaint->feedback)
-            <div class="pt-6 border-t border-gray-200 dark:border-gray-700 space-y-2">
-                <h4 class="text-xs uppercase tracking-wider font-bold text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                    Feedback pelanggan
+        <div class="pt-6 border-t border-gray-200 dark:border-gray-700 space-y-2">
+            <h4 class="text-xs uppercase tracking-wider font-bold text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                Feedback pelanggan
+                @if ($complaint->feedback)
                     <span class="flex items-center gap-0.5 text-yellow-500">
                         @for ($i = 1; $i <= 5; $i++)
                             <svg class="w-4 h-4 {{ $i <= (int) $complaint->feedback->rating ? 'fill-current' : 'text-gray-300 dark:text-gray-600' }}" viewBox="0 0 20 20">
@@ -84,11 +85,16 @@
                             </svg>
                         @endfor
                     </span>
-                </h4>
+                @endif
+            </h4>
+            
+            @if ($complaint->feedback)
                 @if ($complaint->feedback->comment)
                     <p class="text-gray-800 dark:text-gray-100 whitespace-pre-wrap leading-relaxed max-w-4xl">{{ $complaint->feedback->comment }}</p>
                 @endif
-            </div>
-        @endif
+            @else
+                <p class="text-sm text-gray-500 dark:text-gray-400 italic">Pelanggan belum memberikan feedback.</p>
+            @endif
+        </div>
     </div>
 </x-atoms.card>

@@ -62,7 +62,19 @@
                     </div>
                 @endif
 
-                {{-- (optional) nanti tampilkan catatan teknisi di sini --}}
+                @if ($complaint->response)
+                    <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600">
+                        <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-2">
+                            Catatan Teknis NOC
+                            @if ($complaint->status === 'resolved')
+                                <span class="ml-2 px-2 py-0.5 bg-green-100 text-green-800 text-[10px] font-bold uppercase rounded">Resolved</span>
+                            @elseif ($complaint->status === 'in_progress')
+                                <span class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-[10px] font-bold uppercase rounded">In Progress</span>
+                            @endif
+                        </h4>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ $complaint->response->notes ?? '-' }}</p>
+                    </div>
+                @endif
             </div>
 
             <div class="mt-4">

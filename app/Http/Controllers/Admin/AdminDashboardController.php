@@ -41,7 +41,7 @@ class AdminDashboardController extends Controller
             return view('admin.complaints.show', compact('complaint', 'nocs'));
         }
 
-public function assign(Request $request, $id)
+    public function assign(Request $request, $id)
 {
     $request->validate([
         'noc_id' => 'required|exists:users,id',
@@ -55,11 +55,11 @@ public function assign(Request $request, $id)
         return back()->with('error', 'This complaint has already been assigned.');
     }
 
-    // Buat respon distribusi
+    // Buat respon distribusi dengan notes default jika kosong
     Response::create([
         'complaint_id' => $complaint->id,
         'noc_id' => $request->noc_id,
-        'notes' => $request->notes,
+        'notes' => $request->notes ?? '-',
     ]);
 
     return back()->with('success', 'Complaint has been assigned to technician.');
@@ -86,6 +86,17 @@ public function verify(Complaint $complaint)
         if ($complaint->verification_status !== 'pending') {
             return back()->with('error', 'This complaint has already been reviewed.');
         }
+
+        // Cek apakah ada keluhan 'pending' yang lebih lama
+        $olderPending = Complaint::where('verification_status', 'pending')
+            ->where('created_at', '<', $complaint->created_at)
+            ->first();
+
+        if ($olderPending) {
+            $formattedTime = $olderPending->created_at->format('d M Y H:i');
+            return back()->with('error', "Maaf, silakan verifikasi keluhan yang lebih lama terlebih dahulu (Keluhan: \"{$olderPending->title}\" pada {$formattedTime}).");
+        }
+
         $complaint->verification_status = 'accepted';
         $complaint->save();
         return back()->with('success', 'Complaint has been accepted and is ready to be assigned.');

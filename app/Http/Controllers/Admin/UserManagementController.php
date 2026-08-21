@@ -47,36 +47,33 @@ public function update(Request $request, $id)
         'full_name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email,' . $user->id,
         'role' => 'required|in:admin,noc,customer',
-        // Password sekarang opsional
         'password' => 'nullable|min:6|confirmed',
     ]);
 
-    
-
      // Siapkan data untuk diupdate
-    $data = $request->only('full_name', 'email', 'role');
-    
-
-    // Kalau customer, role tidak boleh diubah
-    if ($user->role === 'customer') {
-        $request->merge(['role' => 'customer']);
-    }
-
+    $data = [
+        'full_name' => $request->full_name,
+        'email' => $request->email,
+    ];
 
     // Jika password diisi, hash dan tambahkan ke data update
     if ($request->filled('password')) {
         $data['password'] = bcrypt($request->password);
     }
     
-    // Kalau customer, role tidak boleh diubah
-    if ($user->role === 'customer') {
-        unset($data['role']);
+    // Kalau bukan customer, role bisa diubah
+    if ($user->role !== 'customer') {
+        $data['role'] = $request->role;
     }
 
     $user->update($data);
 
+    $message = 'User updated successfully.';
+    if ($request->filled('password')) {
+        $message = 'User information and password updated successfully.';
+    }
 
-    return back()->with('success', 'User updated successfully.');
+    return back()->with('success', $message);
 }
 
 public function destroy($id)

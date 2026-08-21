@@ -24,6 +24,12 @@ class PasswordController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        return back()->with('status', 'password-updated');
+        // Logout user and redirect to login
+        \Illuminate\Support\Facades\Auth::logout();
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('status', 'password-updated');
     }
 }

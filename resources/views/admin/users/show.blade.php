@@ -9,6 +9,18 @@
 
 <x-templates.navigation-template :menu-items="$menuItems" title="Detail Pengguna: {{ $user->full_name }}">
 
+    {{-- Notifikasi Sukses/Error --}}
+    @if (session('success'))
+        <div class="mb-4 rounded-lg bg-green-50 dark:bg-green-900/30 p-4 text-sm font-semibold text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="mb-4 rounded-lg bg-red-50 dark:bg-red-900/30 p-4 text-sm font-semibold text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="space-y-6">
 
         {{-- BAGIAN 1: UPDATE INFORMASI PROFIL --}}
@@ -53,6 +65,11 @@
             <form method="POST" action="{{ route('admin.users.update', $user->id) }}" class="mt-6 space-y-6" id="update-password-form">
                 @csrf
                 @method('PUT')
+
+                {{-- Hidden fields to preserve profile data during password update --}}
+                <input type="hidden" name="full_name" value="{{ $user->full_name }}">
+                <input type="hidden" name="email" value="{{ $user->email }}">
+                <input type="hidden" name="role" value="{{ $user->role }}">
 
                 <x-atoms.input-password name="password" label="Password Baru" />
                 <x-atoms.input-password name="password_confirmation" label="Konfirmasi Password Baru" />

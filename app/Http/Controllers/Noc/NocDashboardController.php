@@ -58,8 +58,28 @@ class NocDashboardController extends Controller
                     ->where('complaint_id', $id)
                     ->firstOrFail();
 
-        // Update status complaint
         $complaint = $response->complaint;
+
+        // Validasi FIFO hanya jika status mau diubah ke 'resolved'
+        if ($request->status === 'resolved') {
+            // Ambil semua ID keluhan yang ditugaskan ke NOC ini
+            $assignedComplaintIds = Response::where('noc_id', Auth::id())
+                ->where('complaint_id', '!=', $id) // Kecuali keluhan ini sendiri
+                ->pluck('complaint_id');
+
+            // Cek apakah ada keluhan yang masuk lebih dulu tapi belum 'resolved'
+            $olderPending = Complaint::whereIn('id', $assignedComplaintIds)
+                ->where('status', '!=', 'resolved')
+                ->where('created_at', '<', $complaint->created_at)
+                ->first();
+
+            if ($olderPending) {
+                $formattedTime = $olderPending->created_at->format('d M Y H:i');
+                return back()->with('error', "Maaf, silakan selesaikan keluhan yang lebih lama terlebih dahulu (Keluhan: \"{$olderPending->title}\" pada {$formattedTime}).");
+            }
+        }
+
+        // Update status complaint
         $complaint->status = $request->status;
         $complaint->save();
 
